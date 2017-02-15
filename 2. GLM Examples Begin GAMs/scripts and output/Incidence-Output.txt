@@ -1,0 +1,71 @@
+
+> island <- read.table("c://temp/isolation.txt",header=T)
+
+> attach(island)
+
+> names(island)
+[1] "incidence" "area"      "isolation"
+
+> model1 <- glm(incidence~area*isolation,binomial)
+
+> model2 <- glm(incidence~area+isolation,binomial)
+
+> anova(model1,model2,test="Chi")
+Analysis of Deviance Table
+
+Model 1: incidence ~ area * isolation
+Model 2: incidence ~ area + isolation
+  Resid. Df Resid. Dev Df Deviance P(>|Chi|)
+1        46     28.252                      
+2        47     28.402 -1 -0.15043    0.6981
+
+> summary(model2)
+
+Call:
+glm(formula = incidence ~ area + isolation, family = binomial)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.8189  -0.3089   0.0490   0.3635   2.1192  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)   
+(Intercept)   6.6417     2.9218   2.273  0.02302 * 
+area          0.5807     0.2478   2.344  0.01909 * 
+isolation    -1.3719     0.4769  -2.877  0.00401 **
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 68.029  on 49  degrees of freedom
+Residual deviance: 28.402  on 47  degrees of freedom
+AIC: 34.402
+
+Number of Fisher Scoring iterations: 6
+
+
+> modela <- glm(incidence~area,binomial)
+
+> modeli <- glm(incidence~isolation,binomial)
+
+> par(mfrow=c(2,2))
+
+> xv <- seq(0,9,0.01)
+
+> yv <- predict(modela,list(area=xv),type="response")
+
+> plot(area,incidence)
+
+> lines(xv,yv)
+
+> xv2 <- seq(0,10,0.1)
+
+> yv2 <- predict(modeli,list(isolation=xv2),type="response")
+
+> plot(isolation,incidence)
+
+> lines(xv2,yv2)
+
+> detach(island) ## Is a good idea to do this as a matter of habit
+

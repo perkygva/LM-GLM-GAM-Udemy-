@@ -1,0 +1,32 @@
+
+> data(warpbreaks)
+
+> head(warpbreaks)
+  breaks wool tension
+1     26    A       L
+2     30    A       L
+3     54    A       L
+4     25    A       L
+5     70    A       L
+6     52    A       L
+
+> wm <- lm(breaks~wool*tension,data=warpbreaks)
+
+> par(mfrow=c(2,2))
+
+> plot(wm)  # residual plots are fine
+
+> anova(wm)
+Analysis of Variance Table
+
+Response: breaks
+             Df Sum Sq Mean Sq F value    Pr(>F)    
+wool          1  450.7  450.67  3.7653 0.0582130 .  
+tension       2 2034.3 1017.13  8.4980 0.0006926 ***
+wool:tension  2 1002.8  501.39  4.1891 0.0210442 *  
+Residuals    48 5745.1  119.69                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+
+> with(warpbreaks,interaction.plot(tension,wool,breaks))
+

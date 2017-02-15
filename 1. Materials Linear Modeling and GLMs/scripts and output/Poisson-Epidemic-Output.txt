@@ -1,0 +1,88 @@
+
+> y <- c(12,14,33,50,67,74,123,141,165,204,253,246,240)
+
+> t <- 1:13
+
+> plot(t+1980,y,xlab="Year",ylab="New AIDS Cases",ylim=c(0,280))
+
+> m0 <- glm(y~t,poisson)
+
+> m0
+
+Call:  glm(formula = y ~ t, family = poisson)
+
+Coefficients:
+(Intercept)            t  
+     3.1406       0.2021  
+
+Degrees of Freedom: 12 Total (i.e. Null);  11 Residual
+Null Deviance:	    872.2 
+Residual Deviance: 80.69 	AIC: 166.4 
+
+> par(mfrow=c(2,2))
+
+> plot(m0)
+
+> m1 <- glm(y~t+I(t^2),poisson)
+
+> par(mfrow=c(2,2))
+
+> plot(m1)
+
+> summary(m1)
+
+Call:
+glm(formula = y ~ t + I(t^2), family = poisson)
+
+Deviance Residuals: 
+     Min        1Q    Median        3Q       Max  
+-1.45903  -0.64491   0.08927   0.67117   1.54596  
+
+Coefficients:
+             Estimate Std. Error z value Pr(>|z|)    
+(Intercept)  1.901459   0.186877  10.175  < 2e-16 ***
+t            0.556003   0.045780  12.145  < 2e-16 ***
+I(t^2)      -0.021346   0.002659  -8.029 9.82e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 872.2058  on 12  degrees of freedom
+Residual deviance:   9.2402  on 10  degrees of freedom
+AIC: 96.924
+
+Number of Fisher Scoring iterations: 4
+
+
+> anova(m0,m1,test="Chisq")
+Analysis of Deviance Table
+
+Model 1: y ~ t
+Model 2: y ~ t + I(t^2)
+  Resid. Df Resid. Dev Df Deviance P(>|Chi|)    
+1        11     80.686                          
+2        10      9.240  1   71.446 < 2.2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+
+> beta.1 <- summary(m1)$coefficients[2,]
+
+> ci <- c(beta.1[1]-1.96*beta.1[2],beta.1[1]+1.96*beta.1[2])
+
+> ci # print 95% CI for beta_1
+ Estimate  Estimate 
+0.4662750 0.6457316 
+
+> new.t <- seq(1,13,length=100)
+
+> fv <- predict(m1,data.frame(t=new.t),se=TRUE)
+
+> plot(t+1980,y,xlab="Year",ylab="New AIDS Cases",ylim=c(0,280))
+
+> lines(new.t+1980,exp(fv$fit))
+
+> lines(new.t+1980,exp(fv$fit+2*fv$se.fit),lty=2)
+
+> lines(new.t+1980,exp(fv$fit-2*fv$se.fit),lty=2)
+

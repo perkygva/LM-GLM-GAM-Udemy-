@@ -1,0 +1,115 @@
+
+> ### Binomial models and heart disease
+
+> # Read in original Hand et al data from heart.csv
+
+> heart <- read.csv("c:/temp/heart.csv", header=T)
+
+> heart # to view the entire data set
+    ck ha ok
+1   20  2 88
+2   60 13 26
+3  100 30  8
+4  140 30  5
+5  180 21  0
+6  220 19  1
+7  260 18  1
+8  300 13  1
+9  340 19  1
+10 380 15  0
+11 420  7  0
+12 460  8  0
+
+> head(heart) #
+   ck ha ok
+1  20  2 88
+2  60 13 26
+3 100 30  8
+4 140 30  5
+5 180 21  0
+6 220 19  1
+
+> # Then plot the observed proportions of those who had a heart attack
+
+> # divided by the total number of patients:
+
+> p <- heart$ha /(heart$ha+heart$ok)
+
+> p
+ [1] 0.02222222 0.33333333 0.78947368 0.85714286 1.00000000 0.95000000 0.94736842 0.92857143 0.95000000 1.00000000 1.00000000 1.00000000
+
+> plot(heart$ck,p,xlab="Creatinine kinase level", ylab="Proportion Heart Attack")
+
+> mod.0 <- glm(cbind(ha,ok)~ck, family=binomial(link=logit), data=heart)
+
+> mod.0
+
+Call:  glm(formula = cbind(ha, ok) ~ ck, family = binomial(link = logit), 
+    data = heart)
+
+Coefficients:
+(Intercept)           ck  
+   -2.75836      0.03124  
+
+Degrees of Freedom: 11 Total (i.e. Null);  10 Residual
+Null Deviance:	    271.7 
+Residual Deviance: 36.93 	AIC: 62.33 
+
+> #or we could have used since the logit link is the R default for binomial
+
+> mod.0 <- glm(cbind(ha,ok)~ck, family=binomial,data=heart)
+
+> mod.0
+
+Call:  glm(formula = cbind(ha, ok) ~ ck, family = binomial, data = heart)
+
+Coefficients:
+(Intercept)           ck  
+   -2.75836      0.03124  
+
+Degrees of Freedom: 11 Total (i.e. Null);  10 Residual
+Null Deviance:	    271.7 
+Residual Deviance: 36.93 	AIC: 62.33 
+
+> # Generate the model diagnostic plots
+
+> par(mfrow=c(2,2))
+
+> plot(mod.0)
+
+> plot(heart$ck,p,xlab="Creatinise kinase level", ylab="proportion Heart Attack")
+
+> lines(heart$ck,fitted(mod.0))
+
+> mod.2 <- glm(cbind(ha,ok)~ck+I(ck^2)+I(ck^3), family=binomial, data=heart)
+
+> mod.2
+
+Call:  glm(formula = cbind(ha, ok) ~ ck + I(ck^2) + I(ck^3), family = binomial, 
+    data = heart)
+
+Coefficients:
+(Intercept)           ck      I(ck^2)      I(ck^3)  
+ -5.786e+00    1.102e-01   -4.649e-04    6.448e-07  
+
+Degrees of Freedom: 11 Total (i.e. Null);  8 Residual
+Null Deviance:	    271.7 
+Residual Deviance: 4.252 	AIC: 33.66 
+
+> par(mfrow=c(1,1))
+
+> plot(heart$ck,p,xlab="Creatinine kinase level", ylab="Proportion Heart Attack")
+
+> lines(heart$ck,fitted(mod.2))
+
+> anova(mod.0,mod.2,test="Chisq")
+Analysis of Deviance Table
+
+Model 1: cbind(ha, ok) ~ ck
+Model 2: cbind(ha, ok) ~ ck + I(ck^2) + I(ck^3)
+  Resid. Df Resid. Dev Df Deviance P(>|Chi|)    
+1        10     36.929                          
+2         8      4.252  2   32.676 8.025e-08 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+

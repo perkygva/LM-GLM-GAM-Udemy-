@@ -1,0 +1,83 @@
+
+> a1 <- data.frame(y=(c(435,147,375,134)),gender=as.factor(c("F","F","M","M")),faith=as.factor(c(1,0,1,0)))
+
+> a1
+    y gender faith
+1 435      F     1
+2 147      F     0
+3 375      M     1
+4 134      M     0
+
+> mod.0 <- glm(y~gender+faith,data=a1,family=poisson)
+
+> model.matrix(mod.0)
+  (Intercept) gender[T.M] faith[T.1]
+1           1           0          1
+2           1           0          0
+3           1           1          1
+4           1           1          0
+attr(,"assign")
+[1] 0 1 2
+attr(,"contrasts")
+attr(,"contrasts")$gender
+[1] "contr.Treatment"
+
+attr(,"contrasts")$faith
+[1] "contr.Treatment"
+
+
+> mod.0
+
+Call:  glm(formula = y ~ gender + faith, family = poisson, data = a1)
+
+Coefficients:
+(Intercept)  gender[T.M]   faith[T.1]  
+      5.010       -0.134        1.059  
+
+Degrees of Freedom: 3 Total (i.e. Null);  1 Residual
+Null Deviance:	    272.7 
+Residual Deviance: 0.162 	AIC: 35.41 
+
+> fitted(mod.0)
+      1       2       3       4 
+432.099 149.901 377.901 131.099 
+
+> mod.1 <- glm(y~gender*faith,data=a1,family=poisson)
+
+> model.matrix(mod.1)
+  (Intercept) gender[T.M] faith[T.1] gender[T.M]:faith[T.1]
+1           1           0          1                      0
+2           1           0          0                      0
+3           1           1          1                      1
+4           1           1          0                      0
+attr(,"assign")
+[1] 0 1 2 3
+attr(,"contrasts")
+attr(,"contrasts")$gender
+[1] "contr.Treatment"
+
+attr(,"contrasts")$faith
+[1] "contr.Treatment"
+
+
+> mod.1
+
+Call:  glm(formula = y ~ gender * faith, family = poisson, data = a1)
+
+Coefficients:
+           (Intercept)             gender[T.M]              faith[T.1]  gender[T.M]:faith[T.1]  
+               4.99043                -0.09259                 1.08491                -0.05583  
+
+Degrees of Freedom: 3 Total (i.e. Null);  0 Residual
+Null Deviance:	    272.7 
+Residual Deviance: 5.107e-15 	AIC: 37.25 
+
+> anova(mod.0,mod.1,test="Chisq")
+Analysis of Deviance Table
+
+Model 1: y ~ gender + faith
+Model 2: y ~ gender * faith
+  Resid. Df Resid. Dev Df Deviance P(>|Chi|)
+1         1      0.162                      
+2         0      0.000  1    0.162    0.6873
+

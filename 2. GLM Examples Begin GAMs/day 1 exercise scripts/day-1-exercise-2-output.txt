@@ -1,0 +1,105 @@
+
+> data(cars)
+
+> head(cars)
+  speed dist
+1     4    2
+2     4   10
+3     7    4
+4     7   22
+5     8   16
+6     9   10
+
+> cm1 <- lm(dist ~ speed + I(speed^2),data=cars)
+
+> summary(cm1)
+
+Call:
+lm(formula = dist ~ speed + I(speed^2), data = cars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-28.720  -9.184  -3.188   4.628  45.152 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)
+(Intercept)  2.47014   14.81716   0.167    0.868
+speed        0.91329    2.03422   0.449    0.656
+I(speed^2)   0.09996    0.06597   1.515    0.136
+
+Residual standard error: 15.18 on 47 degrees of freedom
+Multiple R-squared: 0.6673,	Adjusted R-squared: 0.6532 
+F-statistic: 47.14 on 2 and 47 DF,  p-value: 5.852e-12 
+
+
+> cm2 <- lm(dist ~ speed + I(speed^2)-1, data=cars)
+
+> summary(cm2)
+
+Call:
+lm(formula = dist ~ speed + I(speed^2) - 1, data = cars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-28.836  -9.071  -3.152   4.570  44.986 
+
+Coefficients:
+           Estimate Std. Error t value Pr(>|t|)   
+speed       1.23903    0.55997   2.213  0.03171 * 
+I(speed^2)  0.09014    0.02939   3.067  0.00355 **
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+
+Residual standard error: 15.02 on 48 degrees of freedom
+Multiple R-squared: 0.9133,	Adjusted R-squared: 0.9097 
+F-statistic: 252.8 on 2 and 48 DF,  p-value: < 2.2e-16 
+
+
+> cm3 <- lm(dist ~ speed-1, data=cars)
+
+> summary(cm3)
+
+Call:
+lm(formula = dist ~ speed - 1, data = cars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-26.183 -12.637  -5.455   4.590  50.181 
+
+Coefficients:
+      Estimate Std. Error t value Pr(>|t|)    
+speed   2.9091     0.1414   20.58   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+
+Residual standard error: 16.26 on 49 degrees of freedom
+Multiple R-squared: 0.8963,	Adjusted R-squared: 0.8942 
+F-statistic: 423.5 on 1 and 49 DF,  p-value: < 2.2e-16 
+
+
+> anova(cm2,cm3,test="Chi")
+Analysis of Variance Table
+
+Model 1: dist ~ speed + I(speed^2) - 1
+Model 2: dist ~ speed - 1
+  Res.Df   RSS Df Sum of Sq P(>|Chi|)   
+1     48 10831                          
+2     49 12954 -1   -2122.7  0.002162 **
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+
+> AIC(cm2,cm3)
+    df      AIC
+cm2  3 416.8016
+cm3  2 423.7498
+
+> par(mfrow=c(2,2))
+
+> plot(cm2)
+
+> b <- coef(cm2)
+
+> 5280/(b[1]*60^2)
+   speed 
+1.183722 
+

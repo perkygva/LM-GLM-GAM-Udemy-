@@ -1,0 +1,91 @@
+
+> library("DAAG")
+
+> data(ACF1)
+
+> head(ACF1)
+  count endtime
+1     1       6
+2     3       6
+3     5       6
+4     1       6
+5     2       6
+6     1       6
+
+> plot(count ~ log(endtime), data = ACF1)
+
+> ACF.glm <- glm(count ~ endtime, family = poisson, data = ACF1)
+
+> summary(ACF.glm)
+
+Call:
+glm(formula = count ~ endtime, family = poisson, data = ACF1)
+
+Deviance Residuals: 
+     Min        1Q    Median        3Q       Max  
+-2.46204  -0.47851  -0.07943   0.38159   2.26332  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -0.32152    0.40046  -0.803    0.422    
+endtime      0.11920    0.02642   4.511 6.44e-06 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 51.105  on 21  degrees of freedom
+Residual deviance: 28.369  on 20  degrees of freedom
+AIC: 92.209
+
+Number of Fisher Scoring iterations: 5
+
+
+> par(mfrow=c(2,2))
+
+> plot(ACF.glm)
+
+> ACF.glm2 <- glm(count ~ endtime + I(endtime^2), family = poisson, data = ACF1)
+
+> summary(ACF.glm2)
+
+Call:
+glm(formula = count ~ endtime + I(endtime^2), family = poisson, 
+    data = ACF1)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.0615  -0.7834  -0.2808   0.4510   2.1693  
+
+Coefficients:
+              Estimate Std. Error z value Pr(>|z|)  
+(Intercept)   1.722364   1.092494   1.577    0.115  
+endtime      -0.262356   0.199685  -1.314    0.189  
+I(endtime^2)  0.015137   0.007954   1.903    0.057 .
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 51.105  on 21  degrees of freedom
+Residual deviance: 24.515  on 19  degrees of freedom
+AIC: 90.354
+
+Number of Fisher Scoring iterations: 5
+
+
+> par(mfrow=c(2,2))
+
+> plot(ACF.glm2)
+
+> anova(ACF.glm,ACF.glm2, test="Chisq")
+Analysis of Deviance Table
+
+Model 1: count ~ endtime
+Model 2: count ~ endtime + I(endtime^2)
+  Resid. Df Resid. Dev Df Deviance P(>|Chi|)  
+1        20     28.369                        
+2        19     24.515  1   3.8548    0.0496 *
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+

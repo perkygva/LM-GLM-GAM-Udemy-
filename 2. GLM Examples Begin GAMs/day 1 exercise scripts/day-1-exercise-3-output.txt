@@ -1,0 +1,40 @@
+
+> conc <- c(0.1,0.5,1,10,20,30,50,70,80,100,150)
+
+> no <- c(7,1,10,9,2,9,13,1,1,4,3)
+
+> yes <- c(0,0,3,4,0,6,7,0,0,1,7)
+
+> n <- no + yes
+
+> plot(log(conc),log((yes+0.5)/(no+0.5)))
+
+> p <- yes/n
+
+> inhibit.glm <- glm(p ~ I(log(conc)), family = binomial, weights = n)
+
+> summary(inhibit.glm)
+
+Call:
+glm(formula = p ~ I(log(conc)), family = binomial, weights = n)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.2510  -1.0599  -0.5029   0.3152   1.3513  
+
+Coefficients:
+             Estimate Std. Error z value Pr(>|z|)    
+(Intercept)   -1.7659     0.5209  -3.390 0.000699 ***
+I(log(conc))   0.3437     0.1440   2.387 0.016975 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 16.6834  on 10  degrees of freedom
+Residual deviance:  9.3947  on  9  degrees of freedom
+AIC: 29.994
+
+Number of Fisher Scoring iterations: 4
+
+
